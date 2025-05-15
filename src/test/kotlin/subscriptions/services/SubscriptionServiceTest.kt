@@ -1,11 +1,8 @@
 package subscriptions.services
 
-import org.example.subscriptions.data.Payment
-import org.example.subscriptions.data.User
-import org.example.subscriptions.services.BillingService
-import org.example.subscriptions.services.BillingServiceImpl
-import org.example.subscriptions.services.SubscriptionService
-import org.example.subscriptions.services.SubscriptionServiceImpl
+import org.example.subscriptions.data.*
+
+import org.example.subscriptions.services.*
 import io.mockk.*
 import org.junit.Before
 import org.junit.Test
