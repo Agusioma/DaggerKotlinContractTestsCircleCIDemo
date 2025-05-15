@@ -1,20 +1,20 @@
 package subscriptions.services
 
 import org.example.subscriptions.data.*
-
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.example.subscriptions.services.*
-import io.mockk.*
-import org.junit.Before
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
 
 class SubscriptionServiceTest {
 
     private lateinit var subscriptionService: SubscriptionService
     private val billingService = mockk<BillingService>()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         subscriptionService = SubscriptionServiceImpl(billingService)
     }
@@ -31,15 +31,12 @@ class SubscriptionServiceTest {
         every { billingService.processPayment(user, plan.price) } returns initialPayment
         every { billingService.retryPayment(initialPayment) } returns retryPayment
 
-        // Attempt to subscribe
         val subscription = subscriptionService.subscribe(user, plan)
 
-        // Verify subscription creation after retrying payment
-        assertEquals(true, subscription.active)
+        assertTrue(subscription.active)
         assertEquals(plan.name, subscription.plan.name)
         assertEquals(1, retryPayment.retryCount)
 
-        // Verify that retryPayment was called exactly once
         verify(exactly = 1) { billingService.retryPayment(initialPayment) }
     }
 
@@ -49,15 +46,20 @@ class SubscriptionServiceTest {
         val basicPlan = Plan("Basic", 5.0, BillingCycle.MONTHLY)
         val premiumPlan = Plan("Premium", 10.0, BillingCycle.MONTHLY)
 
-        // Mock existing subscription
-        val existingSubscription = Subscription(user.id, basicPlan, true, System.currentTimeMillis(), 0, 0)
+        // Assume payment always succeeds
         every { billingService.processPayment(user, premiumPlan.price) } returns Payment(user.id, premiumPlan.price, true)
 
-        // Upgrade subscription to premium
-        val upgradedSubscription = subscriptionService.upgradeSubscription(user, premiumPlan)
+        // First subscribe to a basic plan
+        every { billingService.processPayment(user, basicPlan.price) } returns Payment(user.id, basicPlan.price, true)
+        subscriptionService.subscribe(user, basicPlan)
 
-        assertEquals(premiumPlan.name, upgradedSubscription.plan.name)
-        assertEquals(existingSubscription.userId, upgradedSubscription.userId)
+        // Upgrade subscription
+        val upgraded = subscriptionService.upgradeSubscription(user, premiumPlan)
+
+        assertEquals(premiumPlan.name, upgraded.plan.name)
+        assertEquals(user.id, upgraded.userId)
+        assertTrue(upgraded.active)
     }
 }
+
 

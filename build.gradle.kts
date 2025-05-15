@@ -20,10 +20,17 @@ dependencies {
     kapt("com.google.dagger:dagger-compiler:2.56.2")
     testImplementation("io.mockk:mockk:1.13.7")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     testImplementation(kotlin("test"))
 }
 
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
+    }
+    jvmArgs("-Dnet.bytebuddy.experimental=true")
+
 }
