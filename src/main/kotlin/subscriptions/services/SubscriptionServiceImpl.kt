@@ -1,11 +1,10 @@
 package org.example.subscriptions.services
 
+import org.example.subscriptions.data.BillingCycle
 import org.example.subscriptions.data.Plan
 import org.example.subscriptions.data.Subscription
 import org.example.subscriptions.data.User
-import org.example.subscriptions.data.BillingCycle
 import javax.inject.Inject
-import kotlin.math.ceil
 
 class SubscriptionServiceImpl @Inject constructor(
     private val billingService: BillingService

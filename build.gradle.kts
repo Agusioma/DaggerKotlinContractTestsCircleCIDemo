@@ -32,5 +32,4 @@ tasks.test {
         showStandardStreams = true
     }
     jvmArgs("-Dnet.bytebuddy.experimental=true")
-
 }
