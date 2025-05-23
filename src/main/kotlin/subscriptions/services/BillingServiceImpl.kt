@@ -14,7 +14,7 @@ class BillingServiceImpl @Inject constructor() : BillingService {
 
     override fun retryPayment(payment: Payment): Payment {
         // Simulate retrying payment, increasing retry count
-        val successful = Math.random() > 0.5 // Retry has a better chance of success
+        val successful = Math.random() > 0.5
         return payment.copy(successful = successful, retryCount = payment.retryCount + 1)
     }
 }
